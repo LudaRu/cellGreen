@@ -1,5 +1,3 @@
-import {CommonService} from '../common/service';
-import Map from './modules/game/map';
+import gameModule from './modules/game/game';
 
-const mapGame = new Map();
-mapGame.render();
+gameModule();

@@ -1,6 +1,6 @@
 import {CFG} from './cfg';
 import Cell from './Cell';
-import EventEmitter from '../../../common/EventEmitter';
+import {EventEmitter} from './service'
 
 export default class Map {
   constructor() {
@@ -9,16 +9,12 @@ export default class Map {
     canvas.width = CFG.width;
     canvas.height = CFG.height;
     document.body.appendChild(canvas);
+
     this.context = canvas.getContext('2d');
-
     this.cellList = this._generateCells();
-
-  //  fixme
-    const eventEmitter = new EventEmitter();
   }
 
   render() {
-
     // Рендер всех ячеек
     this.cellList.forEach((items) => {
       items.forEach((cell) => {
