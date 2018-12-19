@@ -1,4 +1,4 @@
-export default function bresenhame(x1, y1, x2, y2) { // fixme сделать асинхронным
+export default (x1, y1, x2, y2) => {
   const deltaX = Math.abs(x2 - x1),
     deltaY = Math.abs(y2 - y1),
     signX = x1 < x2 ? 1 : -1,
