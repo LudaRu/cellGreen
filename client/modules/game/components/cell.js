@@ -4,6 +4,7 @@ import Unit from './unit';
 export default class Cell {
   constructor(colI, rowI, solid, context) {
     // Индексы в массиве объектов
+    this.id = rowI + '' + colI;
     this.rowIndex = rowI;
     this.colIndex = colI;
     this.context = context;
@@ -24,10 +25,13 @@ export default class Cell {
     this.context.fillStyle = this.solid ? '#63e269' : '#4CAF50';
     this.context.fillRect(this.top, this.left, CFG.cellWidth, CFG.cellHeight);
     this._drawBorder();
+    this.renderData();
   }
 
-  renderData(){
-    this.data.unit.render();
+  renderData() {
+    if(this.data.unit){
+      this.data.unit.render();
+    }
   }
 
   _drawBorder() {
@@ -41,7 +45,27 @@ export default class Cell {
     this.context.stroke();
   }
 
-  addUnit(name){
+  createUnit(name) {
     this.data.unit = new Unit(name, this);
+  }
+
+  deleteUnit() {
+    delete this.data.unit;
+  }
+
+  set unit(unit) {
+    this.data.unit = unit;
+  }
+
+  get unit() {
+    return this.data.unit;
+  }
+
+  movementElementToCell(newCell, nameElement) {
+    newCell.data[nameElement] = this.data[nameElement];
+    delete this.data[nameElement];
+
+    newCell.render();
+    this.render();
   }
 }

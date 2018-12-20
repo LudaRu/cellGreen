@@ -8,25 +8,27 @@ export default (params) => {
   const mapGame = new Map();
   mapGame.render();
 
+  /** @type Cell */
   let selectCell;
 
   mapGame.canvas.addEventListener('mousedown', (event) => {
-    const col = Math.floor(event.layerX / CFG.cellHeight);
-    const row = Math.floor(event.layerY / CFG.cellWidth);
+    /** @type Cell */
+    const cell = getCellByMouseEvent(event);
+
+    if(selectCell) {
+      cell.movementElementToCell(selectCell, 'unit');
+        mapGame.render();
+    } else {
+      if(typeof cell.data.unit !== 'undefined') {
+        selectCell = cell;
+        cell.unit.drawBorder();
+      }
+    }
   });
 
   mapGame.canvas.addEventListener('mousemove', (event) => {
-    if(selectCell) {
-      const col = Math.floor(event.screenX / CFG.cellHeight);
-      const row = Math.floor(event.screenY / CFG.cellWidth);
-
-      const togglePoints = bresenhame(0, 0, row, col);
-      togglePoints.forEach((v) => {
-        /** @type Cell **/
-        const cellObj = mapGame.getCanvasCellByPosition(v.x, v.y);
-        cellObj.toggle();
-      });
-    }
+    /** @type Cell */
+    // const cell = getCellByMouseEvent(event);
   });
 
   EventEmitter.subscribe('selectCell', (data) => {
@@ -35,6 +37,13 @@ export default (params) => {
 
   /** @type Cell */
   const f = mapGame.cellList[2][2];
-  f.addUnit('Ivan');
+  f.createUnit('Ivan');
   f.renderData();
+
+  function getCellByMouseEvent(event) {
+    const col = Math.floor(event.layerX / CFG.cellWidth);
+    const row = Math.floor(event.layerY / CFG.cellHeight);
+    return mapGame.getCanvasCellByPosition(row, col);
+  }
+
 };
