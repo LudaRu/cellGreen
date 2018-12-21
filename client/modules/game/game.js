@@ -11,6 +11,7 @@ export default (params) => {
 
   /** @type Cell */
   let selectCell;
+  let mouseCellId;
 
   mapGame.canvas.addEventListener('mousedown', (event) => {
     /** @type Cell */
@@ -31,11 +32,17 @@ export default (params) => {
     if(selectCell) {
       /** @type Cell */
       const cell = getCellByMouseEvent(event);
-      const cellPoints = bresenhame(selectCell.colIndex, selectCell.rowIndex, cell.colIndex, cell.rowIndex);
-      cellPoints.forEach((point) => {
-        const cellTemp = mapGame.cellList[point.y][point.x];
-        cellTemp.toggle();
-      });
+      // Если наведение на новую клетку
+      if(mouseCellId !== cell.id) {
+        mouseCellId = cell.id;
+        mapGame.render();
+        const cellPoints = bresenhame(selectCell.colIndex, selectCell.rowIndex, cell.colIndex, cell.rowIndex);
+        cellPoints.forEach((point) => {
+          const cellTemp = mapGame.cellList[point.y][point.x];
+          cellTemp.change();
+        });
+      }
+
     }
   });
 
