@@ -5,6 +5,8 @@ export default class Unit {
     this.name = name;
     /** @type Cell */
     this.setPositionByCell(cell);
+    this.img =new Image();
+    this.img.src = 'https://banner2.kisspng.com/20180713/xkr/kisspng-team-sport-football-player-lucas-hernandez-5b49736c91ec10.8388072915315403325977.jpg';
   }
 
   setPositionByCell(cell) {
@@ -20,22 +22,12 @@ export default class Unit {
   }
 
   _renderImg() {
-    const img = new Image();
-    img.src = 'https://banner2.kisspng.com/20180713/xkr/kisspng-team-sport-football-player-lucas-hernandez-5b49736c91ec10.8388072915315403325977.jpg';
-    img.onload = () => {
-      this.context.drawImage(img, this.x, this.y, this.w, this.h);
+    if(!this.img.onload){
+      this.img.onload = () => {
+        this.context.drawImage(this.img, this.x, this.y, this.w, this.h);
+      };
     }
-  }
 
-  drawBorder() {
-    this.context.beginPath();
-    this.context.strokeStyle = '#ff6200';
-    this.context.moveTo(this.x - 1, this.y - 1);
-    this.context.lineTo(this.x - 1, this.y + this.h - 1);
-    this.context.lineTo(this.x + this.w - 1, this.y + this.h - 1);
-    this.context.lineTo(this.x + this.w - 1, this.y - 1);
-    this.context.lineTo(this.x - 1, this.y - 1);
-    this.context.stroke();
+    this.context.drawImage(this.img, this.x, this.y, this.w, this.h);
   }
-
 }

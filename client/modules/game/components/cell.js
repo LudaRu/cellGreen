@@ -33,11 +33,6 @@ export default class Cell {
     this.context.fillRect(this.top, this.left, CFG.cellWidth, CFG.cellHeight);
     this._drawBorder();
     this.renderData();
-
-    if(this.state.change) {
-      this.data.unit.drawBorder()
-    }
-
   }
 
   renderData() {

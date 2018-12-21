@@ -17,24 +17,25 @@ export default (params) => {
     /** @type Cell */
     const cell = getCellByMouseEvent(event);
 
-    if (selectCell) {
+    if (selectCell) { // есть выбранная ячейка
       Cell.movementElementToCell(selectCell, cell, 'unit');
       selectCell = null;
       mapGame.render();
-    } else {
+      cell.change();
+    } else { // выбрана ячейка
       if (typeof cell.data.unit !== 'undefined') {
+        cell.change();
         selectCell = cell;
-        cell.unit.drawBorder();
       }
     }
   });
 
   mapGame.canvas.addEventListener('mousemove', (event) => {
-    if(selectCell) {
-      /** @type Cell */
-      const cell = getCellByMouseEvent(event);
-      // Если наведение на новую клетку
-      if(mouseCellId !== cell.id) {
+    /** @type Cell */
+    const cell = getCellByMouseEvent(event);
+
+    if (selectCell) {
+      if (mouseCellId !== cell.id) {
         mouseCellId = cell.id;
         const cellPoints = bresenhame(selectCell.colIndex, selectCell.rowIndex, cell.colIndex, cell.rowIndex);
         mapGame.render();
@@ -43,8 +44,17 @@ export default (params) => {
           cellTemp.change();
         });
       }
-
     }
+
+    if(!selectCell) {
+      if (mouseCellId !== cell.id) {
+        mapGame.render();
+        mouseCellId = cell.id;
+
+        cell.change();
+      }
+    }
+
   });
 
   // EventEmitter.subscribe('selectCell', (data) => {
