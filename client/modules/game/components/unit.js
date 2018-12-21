@@ -4,15 +4,14 @@ export default class Unit {
   constructor(name, cell) {
     this.name = name;
     /** @type Cell */
-    this.cell = cell;
     this.setPositionByCell(cell);
   }
 
   setPositionByCell(cell) {
-    this.x = cell.left+CFG.cellWidth/4;
-    this.y = cell.top+CFG.cellWidth/4;
-    this.w = CFG.cellWidth/2;
-    this.h = CFG.cellHeight/2;
+    this.x = cell.top + CFG.cellWidth / 4;
+    this.y = cell.left + CFG.cellWidth / 4;
+    this.w = CFG.cellWidth / 2;
+    this.h = CFG.cellHeight / 2;
     this.context = cell.context;
   }
 
@@ -21,9 +20,6 @@ export default class Unit {
   }
 
   _renderImg() {
-    let yy = this.cell.left;
-    let xx = this.cell.top;
-
     const img = new Image();
     img.src = 'https://banner2.kisspng.com/20180713/xkr/kisspng-team-sport-football-player-lucas-hernandez-5b49736c91ec10.8388072915315403325977.jpg';
     img.onload = () => {

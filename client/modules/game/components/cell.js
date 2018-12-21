@@ -13,7 +13,10 @@ export default class Cell {
     this.left = rowI * CFG.cellHeight; // Позиция y
     this.solid = solid; // Выделение ячейки
 
+    // fixme
     this.data = {};
+    this.state = {};
+    this.state.change = false;
   }
 
   toggle() {
@@ -26,6 +29,11 @@ export default class Cell {
     this.context.fillRect(this.top, this.left, CFG.cellWidth, CFG.cellHeight);
     this._drawBorder();
     this.renderData();
+
+    if(this.state.change) {
+      this.data.unit.drawBorder()
+    }
+
   }
 
   renderData() {
@@ -45,12 +53,9 @@ export default class Cell {
     this.context.stroke();
   }
 
-  createUnit(name) {
+  createAddUnit(name) {
     this.data.unit = new Unit(name, this);
-  }
-
-  deleteUnit() {
-    delete this.data.unit;
+    this.renderData();
   }
 
   set unit(unit) {
@@ -61,11 +66,14 @@ export default class Cell {
     return this.data.unit;
   }
 
-  movementElementToCell(newCell, nameElement) {
-    newCell.data[nameElement] = this.data[nameElement];
-    delete this.data[nameElement];
+  static movementElementToCell(fromCell, toCell, nameElement) {
+    if(fromCell.id !== toCell.id){
+      toCell.data[nameElement] = fromCell.data[nameElement];
+      toCell.data[nameElement].setPositionByCell(toCell);
+      delete fromCell.data[nameElement];
 
-    newCell.render();
-    this.render();
+      fromCell.render();
+      toCell.render();
+    }
   }
 }

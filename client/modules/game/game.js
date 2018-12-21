@@ -1,5 +1,6 @@
 import Unit from './components/unit';
 import Map from './components/map';
+import Cell from './components/Cell';
 import bresenhame from '../../../common/bresenhame';
 import {EventEmitter} from './service';
 import {CFG} from './cfg';
@@ -15,14 +16,12 @@ export default (params) => {
     /** @type Cell */
     const cell = getCellByMouseEvent(event);
 
-    if(selectCell) {
-      cell.movementElementToCell(selectCell, 'unit');
-        mapGame.render();
+    if (selectCell) {
+      Cell.movementElementToCell(selectCell, cell, 'unit');
+      selectCell = null;
     } else {
-      if(typeof cell.data.unit !== 'undefined') {
-        selectCell = cell;
-        cell.unit.drawBorder();
-      }
+      selectCell = cell;
+      cell.unit.drawBorder();
     }
   });
 
@@ -31,14 +30,14 @@ export default (params) => {
     // const cell = getCellByMouseEvent(event);
   });
 
-  EventEmitter.subscribe('selectCell', (data) => {
-    selectCell = data;
-  });
+  // EventEmitter.subscribe('selectCell', (data) => {
+  //   selectCell = data;
+  // });
 
+  // Добавим юнита на поле
   /** @type Cell */
-  const f = mapGame.cellList[2][2];
-  f.createUnit('Ivan');
-  f.renderData();
+  const cell = mapGame.cellList[2][2];
+  cell.createAddUnit('Ivan');
 
   function getCellByMouseEvent(event) {
     const col = Math.floor(event.layerX / CFG.cellWidth);
