@@ -28,8 +28,15 @@ export default (params) => {
   });
 
   mapGame.canvas.addEventListener('mousemove', (event) => {
-    /** @type Cell */
-    // const cell = getCellByMouseEvent(event);
+    if(selectCell) {
+      /** @type Cell */
+      const cell = getCellByMouseEvent(event);
+      const cellPoints = bresenhame(selectCell.colIndex, selectCell.rowIndex, cell.colIndex, cell.rowIndex);
+      cellPoints.forEach((point) => {
+        const cellTemp = mapGame.cellList[point.y][point.x];
+        cellTemp.toggle();
+      });
+    }
   });
 
   // EventEmitter.subscribe('selectCell', (data) => {
