@@ -20,8 +20,10 @@ export default (params) => {
       Cell.movementElementToCell(selectCell, cell, 'unit');
       selectCell = null;
     } else {
-      selectCell = cell;
-      cell.unit.drawBorder();
+      if (typeof cell.data.unit !== 'undefined') {
+        selectCell = cell;
+        cell.unit.drawBorder();
+      }
     }
   });
 
