@@ -29,6 +29,7 @@ export default class Cell {
   }
 
   render(solid = null) {
+    console.log('ff', CFG)
     this.context.fillStyle = solid ? '#63e269' : '#4CAF50';
     this.context.fillRect(this.top, this.left, CFG.cellWidth, CFG.cellHeight);
     this._drawBorder();
