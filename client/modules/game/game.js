@@ -20,6 +20,7 @@ export default (params) => {
     if (selectCell) {
       Cell.movementElementToCell(selectCell, cell, 'unit');
       selectCell = null;
+      mapGame.render();
     } else {
       if (typeof cell.data.unit !== 'undefined') {
         selectCell = cell;
