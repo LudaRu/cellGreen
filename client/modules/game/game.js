@@ -35,8 +35,8 @@ export default (params) => {
       // Если наведение на новую клетку
       if(mouseCellId !== cell.id) {
         mouseCellId = cell.id;
-        mapGame.render();
         const cellPoints = bresenhame(selectCell.colIndex, selectCell.rowIndex, cell.colIndex, cell.rowIndex);
+        mapGame.render();
         cellPoints.forEach((point) => {
           const cellTemp = mapGame.cellList[point.y][point.x];
           cellTemp.change();

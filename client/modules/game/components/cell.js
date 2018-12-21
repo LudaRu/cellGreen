@@ -25,12 +25,11 @@ export default class Cell {
   }
 
   change() {
-    this.solid = true;
-    this.render();
+    this.render(true);
   }
 
-  render() {
-    this.context.fillStyle = this.solid ? '#63e269' : '#4CAF50';
+  render(solid = null) {
+    this.context.fillStyle = solid ? '#63e269' : '#4CAF50';
     this.context.fillRect(this.top, this.left, CFG.cellWidth, CFG.cellHeight);
     this._drawBorder();
     this.renderData();
