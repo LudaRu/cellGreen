@@ -1,79 +1,112 @@
-import {CFG} from '../cfg';
 import Unit from './unit';
+import {Config} from '../service';
+import bresenhame from '../../../../common/bresenhame';
+
 
 export default class Cell {
-  constructor(colI, rowI, solid, context) {
-    // Индексы в массиве объектов
-    this.id = rowI + '' + colI;
-    this.rowIndex = rowI;
-    this.colIndex = colI;
-    this.context = context;
-
-    this.top = colI * CFG.cellWidth; // Позиция x
-    this.left = rowI * CFG.cellHeight; // Позиция y
-    this.solid = solid; // Выделение ячейки
-
-    // fixme
-    this.data = {};
-    this.state = {};
-    this.state.change = false;
+  constructor(xI, yI) {
+    this.xI = xI;
+    this.yI = yI;
+    this.unit = undefined;
   }
 
-  toggle() {
-    this.solid = !this.solid;
-    this.render();
+  addNewUnit(command) {
+    this.unit = new Unit(command, this);
   }
 
-  change() {
-    this.render(true);
-  }
+  kickBallToCell(cell) {
+    // Мяч внутри этой ячейки
+    if (Cell.ball.cell === this) {
 
-  render(solid = null) {
-    console.log('ff', CFG)
-    this.context.fillStyle = solid ? '#63e269' : '#4CAF50';
-    this.context.fillRect(this.top, this.left, CFG.cellWidth, CFG.cellHeight);
-    this._drawBorder();
-    this.renderData();
-  }
+      // очко атаки
+      const attackScore = Math.floor(Math.random() * this.unit.param.attack) + 1;
 
-  renderData() {
-    if(this.data.unit){
-      this.data.unit.render();
+      let maxProtectionCell = null; // ячейка с максимальным очком защ.
+      let maxProtectionScore = null; // максимальное очком защ.
+
+      const points = bresenhame(this.xI, this.yI, cell.xI, cell.yI);
+      points.forEach((point) => {
+        const cellInPoint = Cell.getCellByXY(point.x, point.y);
+
+        // Выбираем только союзников
+        if (cellInPoint.unit.command !== this.unit.command) {
+          const protectionScore = Math.floor(Math.random() * cellInPoint.unit.param.protection) + 1;
+
+          if (maxProtectionCell && protectionScore <= maxProtectionCell) {
+            return;// выпало число меньше чем предыдущее
+          }
+          maxProtectionCell = cellInPoint;
+          maxProtectionScore = protectionScore;
+        }
+      });
+
+      console.info('attack', attackScore, 'prot', maxProtectionScore);
+      if (attackScore > maxProtectionScore) {
+        Cell.setBallInCell(cell);
+        // return cell; // Вернем союзника
+      } else {
+        Cell.setBallInCell(maxProtectionCell);
+        // return maxProtectionCell; // вернем поймавшего врага
+      }
     }
   }
 
-  _drawBorder() {
-    this.context.beginPath();
-    this.context.strokeStyle = this.solid ? '#41b241' : '#44a147';
-    this.context.moveTo(this.top - 0.5, this.left - 0.5);
-    this.context.lineTo(this.top - 0.5, this.left + 100 - 0.5);
-    this.context.lineTo(this.top + 100 - 0.5, this.left + 100 - 0.5);
-    this.context.lineTo(this.top + 100 - 0.5, this.left - 0.5);
-    this.context.lineTo(this.top - 0.5, this.left - 0.5);
-    this.context.stroke();
+  // СТАТИКА
+
+  // мяч
+  static setBallInCell(cell) {
+    return this.ball = {
+      cell: cell,
+      xI: cell.xI,
+      yI: cell.yI,
+    };
   }
 
-  createAddUnit(name) {
-    this.data.unit = new Unit(name, this);
-    this.renderData();
+  static getBall() {
+    return this.ball;
   }
 
-  set unit(unit) {
-    this.data.unit = unit;
-  }
 
-  get unit() {
-    return this.data.unit;
-  }
+  // Работа со списком ячеек
+  static newCell(xI, yI) {
+    if (xI <= Config.MAX_COL && yI <= Config.MAX_ROW) {
+      if (this.cellList === undefined) {
+        this.cellList = {};
+      }
 
-  static movementElementToCell(fromCell, toCell, nameElement) {
-    if(fromCell.id !== toCell.id){
-      toCell.data[nameElement] = fromCell.data[nameElement];
-      toCell.data[nameElement].setPositionByCell(toCell);
-      delete fromCell.data[nameElement];
+      this.cellList[xI] = (this.cellList[xI] !== undefined) ? this.cellList[xI] : this.cellList[xI] = {};
+      this.cellList[xI][yI] = (this.cellList[xI][yI] !== undefined) ? this.cellList[xI][yI] : this.cellList[xI][yI] = {};
 
-      fromCell.render();
-      toCell.render();
+      const cell = new Cell(xI, yI);
+      this.cellList[xI][yI] = cell;
+      return cell;
     }
+  }
+
+  static getCellList() {
+    return this.cellList;
+  }
+
+  static getCellByXY(xI, yI) {
+    if (Cell.hasCelByXY(xI, yI)) {
+      return this.cellList[xI][yI];
+    }
+  }
+
+  static deleteCellByXY(xI, yI) {
+    if (Cell.hasCelByXY(xI, yI)) {
+      delete this.cellList[xI][yI];
+    }
+  }
+
+  static hasCelByXY(xI, yI) {
+    if (xI <= Config.MAX_COL && yI <= Config.MAX_ROW) {
+      if (this.cellList[xI] !== undefined) {
+        if (this.cellList[xI][yI] !== undefined) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 }

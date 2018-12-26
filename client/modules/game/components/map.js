@@ -1,31 +1,7 @@
-import {CFG} from '../cfg';
 import Cell from './Cell';
-import {EventEmitter} from '../service';
 
 export default class Map {
   constructor() {
-    this.canvas = Map._drawHtml();
-    this.context = this.canvas.getContext('2d');
-    this.cellList = this._generateCells();
-  }
-
-  static _drawHtml() {
-    const canvas = document.createElement('canvas');
-    canvas.id = CFG.idSelector;
-    canvas.width = CFG.width;
-    canvas.height = CFG.height;
-    document.body.appendChild(canvas);
-
-    return canvas;
-  }
-
-  render() {
-    // Рендер всех ячеек
-    this.cellList.forEach((items) => {
-      items.forEach((cell) => {
-        cell.render();
-      });
-    });
   }
 
   // Создание 2-х мерной карты с ячейками
@@ -39,11 +15,6 @@ export default class Map {
     }
 
     return cellList;
-  }
-
-  /* Найти объекта канваса по X Y курсора*/
-  getCanvasCellByPosition(row, col) {
-    return this.cellList[row][col];
   }
 
 }
