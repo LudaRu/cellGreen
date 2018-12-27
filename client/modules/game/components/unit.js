@@ -5,8 +5,17 @@ export default class Unit {
     this.command = command;
     this.cell = cell;
     this.param = {
-      protection: 10,
-      attack: 5,
+      maxProtection: 10,
+      maxAttack: 10,
     }
   }
+
+  getRndAttack() {
+    return Math.floor(Math.random() * this.param.maxAttack) + 1
+  }
+
+  getRndProtection() {
+    return Math.floor(Math.random() * this.param.maxProtection) + 1
+  }
+
 }
