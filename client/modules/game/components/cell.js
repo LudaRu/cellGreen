@@ -4,11 +4,28 @@ import bresenhame from '../../../../common/bresenhame';
 
 
 export default class Cell {
-  constructor(xI, yI) {
+  constructor(xI, yI, unit) {
     this.xI = xI;
     this.yI = yI;
     /** @type Unit */
-    this.unit = undefined;
+    this.unit = unit;
+
+    // ворота
+    if(xI === 1 && yI === 4 || xI === 12 && yI === 4) {
+      this.gateway = true;
+    }
+  }
+
+  // Создание 2-х мерной карты с ячейками
+  static generateCellListAndSetnUnit() {
+    const cellList = [];
+    for (let xI = 1; xI <= Config.MAX_COL; xI++) {
+      cellList[xI] = [];
+      for (let yI = 1; yI <= Config.MAX_ROW; yI++) {
+        cellList[xI][yI] = new Cell(xI, yI);
+      }
+    }
+    return cellList;
   }
 
   static addNewUnitToCell(cell, command) {
@@ -24,57 +41,27 @@ export default class Cell {
     }
   }
 
-  // СТАТИКА
+  static genCellWithTeam(team) {
+    // Объединяем левую и парвую команду в одну кучу
+    let allUnit = team.teamLeft.concat(team.teamRight);
+    const cellList = [];
+    for (let xI = 1; xI <= Config.MAX_COL; xI++) {
+      cellList[xI] = [];
+      for (let yI = 1; yI <= Config.MAX_ROW; yI++) {
 
-  // мяч
-  static setBallInCell(cell) {
-    return this.ball = {
-      cell: cell,
-      xI: cell.xI,
-      yI: cell.yI,
-    };
-  }
-
-  static getBall() {
-    return this.ball;
-  }
-
-
-  // Работа со списком ячеек
-  static newCell(xI, yI) {
-    if (xI <= Config.MAX_COL && yI <= Config.MAX_ROW) {
-      if (this.cellList === undefined) {
-        this.cellList = {};
-      }
-
-      this.cellList[xI] = (this.cellList[xI] !== undefined) ? this.cellList[xI] : this.cellList[xI] = {};
-      this.cellList[xI][yI] = (this.cellList[xI][yI] !== undefined) ? this.cellList[xI][yI] : this.cellList[xI][yI] = {};
-
-      const cell = new Cell(xI, yI);
-      this.cellList[xI][yI] = cell;
-      return cell;
-    }
-  }
-
-
-  static getCellByXY(xI, yI) {
-      return this.cellList[xI][yI];
-  }
-
-  static xyInConfig(xI, yI) {
-    if (xI <= Config.MAX_COL && yI <= Config.MAX_ROW && xI > 0 && yI > 0) {
-      return true;
-    }
-  }
-
-  static hasCelByXY(xI, yI) {
-    if (Cell.xyInConfig(xI, yI)) {
-      if (this.cellList[xI] !== undefined) {
-        if (this.cellList[xI][yI] !== undefined) {
-          return true;
+        // Ищем игрока в этой клетки
+        let unit;
+        for (let i = 0; i < allUnit.length; i++) {
+          if(allUnit[i].xI === xI && allUnit[i].yI === yI){
+            allUnit[i].cell = cellList[xI][yI];
+            unit = allUnit[i];
+            break;
+          }
         }
+
+        cellList[xI][yI] = new Cell(xI, yI, unit);
       }
     }
-    return false;
+    return cellList;
   }
 }
